@@ -1,2 +1,7 @@
 # cmake builds
 cmake-build-*/
+
+
+# IDEs' files
+.idea
+.vscode
