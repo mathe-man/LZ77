@@ -3,4 +3,6 @@ project(LZ77)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(LZ77 src/main.cpp)
+add_executable(LZ77 src/main.cpp
+        src/CompressionManager.cpp
+        src/CompressionManager.h)
