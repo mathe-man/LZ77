@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <vector>
-
+#include <cstddef>
 
 class CompressionManager {
 public:
@@ -10,13 +10,13 @@ public:
     ~CompressionManager();
 
 
-    std::vector<uint8_t> Compress(std::vector<uint8_t> bytes) const;
-    std::vector<uint8_t> Decompress(std::vector<uint8_t> bytes) const;
+    [[nodiscard]] std::vector<uint8_t> Compress(std::vector<uint8_t> bytes) const;
+    [[nodiscard]] std::vector<uint8_t> Decompress(std::vector<uint8_t> bytes) const;
 
-    float GetCompressionRatio(std::vector<uint8_t> base, std::vector<uint8_t> compressed) const{
+    [[nodiscard]] static float GetCompressionRatio(const std::vector<uint8_t>& base, const std::vector<uint8_t>& compressed) {
         return GetCompressionRatio(base.size(), compressed.size());
     }
-    float GetCompressionRatio(size_t base_size, size_t compressed_size) const{
+    [[nodiscard]] static float GetCompressionRatio(const size_t& base_size, const size_t& compressed_size) {
         return static_cast<float>(base_size) / static_cast<float>(compressed_size);
     }
 };
