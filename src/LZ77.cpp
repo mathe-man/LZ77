@@ -18,6 +18,7 @@ std::vector<uint8_t> LZ77::Compress(std::vector<uint8_t> bytes, size_t search_bu
         i += pattern.length; // Jump the compressed elements
     }
 
+    return ToBytes(result);
 }
 
 
@@ -48,6 +49,7 @@ std::vector<uint8_t> LZ77::GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t
     return result;
 }
 
+
 Pattern LZ77::SearchPattern(const std::vector<uint8_t>& search_buffer, std::vector<uint8_t> look_ahead_buffer)
 {
     auto view = std::span<uint8_t>(look_ahead_buffer);
@@ -61,15 +63,14 @@ Pattern LZ77::SearchPattern(const std::vector<uint8_t>& search_buffer, std::vect
 
         if (index_in_buffer < search_buffer.size()) // Mean that an index as been found
         {
-            auto distance_to_index = (size_t)std::abs(int(search_buffer.size() - index_in_buffer));
-            return { distance_to_index, span.size(),  look_ahead_buffer[i]};
+            auto distance_to_index = std::abs(int(search_buffer.size() - index_in_buffer));
+            return { (uint8_t)distance_to_index, (uint8_t)span.size(),  look_ahead_buffer[i]};
         }
     }
 
     // This pattern is not present in the search buffer so we only add the next element
     return {0, 0, look_ahead_buffer[0]};
 }
-
 
 size_t LZ77::SearchInBuffer(std::vector<uint8_t> buffer, std::vector<uint8_t> search)
 {
@@ -87,4 +88,19 @@ size_t LZ77::SearchInBuffer(std::vector<uint8_t> buffer, std::vector<uint8_t> se
     }
 
     return buffer.size();
+}
+
+
+std::vector<uint8_t> LZ77::ToBytes(const std::vector<Pattern>& patterns)
+{
+    auto result = std::vector<uint8_t>();
+
+    for (auto pattern : patterns)
+    {
+        result.push_back(pattern.offset);
+        result.push_back(pattern.length);
+        result.push_back(pattern.next);
+    }
+
+    return result;
 }

@@ -7,8 +7,8 @@
 
 struct Pattern
 {
-    size_t offset;
-    size_t length;
+    uint8_t offset;
+    uint8_t length;
     uint8_t next;
 };
 
@@ -31,4 +31,6 @@ private:
     [[nodiscard]] static std::vector<uint8_t> GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index);
     [[nodiscard]] static Pattern SearchPattern(const std::vector<uint8_t>& search_buffer, std::vector<uint8_t> look_ahead_buffer);
     [[nodiscard]] static size_t SearchInBuffer(std::vector<uint8_t> buffer, std::vector<uint8_t> search);
+
+    [[nodiscard]] static std::vector<uint8_t> ToBytes(const std::vector<Pattern>& patterns);
 };
