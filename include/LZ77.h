@@ -15,7 +15,7 @@ struct Pattern
 
 class LZ77 {
 public:
-    [[nodiscard]] std::vector<uint8_t> static Compress(std::vector<uint8_t> bytes, size_t search_buffer_size, size_t look_ahead_buffer_size);
+    [[nodiscard]] std::vector<uint8_t> static Compress(std::vector<uint8_t> bytes, size_t search_buffer_size = 0, size_t look_ahead_buffer_size = 0);
     [[nodiscard]] std::vector<uint8_t> static Decompress(std::vector<uint8_t> bytes);
 
     [[nodiscard]] static float GetCompressionRatio(const std::vector<uint8_t>& base, const std::vector<uint8_t>& compressed) {
