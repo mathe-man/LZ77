@@ -21,6 +21,35 @@ std::vector<uint8_t> LZ77::Compress(std::vector<uint8_t> bytes, size_t search_bu
     return ToBytes(result);
 }
 
+std::vector<uint8_t> LZ77::Decompress(std::vector<uint8_t> bytes)
+{
+    auto result = std::vector<uint8_t>();
+
+    if (bytes.size() % 3 != 0)
+        throw std::invalid_argument("Invalid length");
+
+    for (size_t i = 0; i < bytes.size(); i += 3)
+    {
+        if (bytes[i] > 0 && bytes[i + 1] > 0)
+        {
+            // Check if the offset and length of the pattern is correct
+            if (bytes[i] > result.size())
+                throw std::invalid_argument(std::string("Invalid offset at index " + bytes[i]).c_str());
+            if (bytes[i+1] > bytes[i])
+                throw std::invalid_argument(std::string("Invalid length at index " + bytes[i]).c_str());
+
+
+            for (int j = 0; j < bytes[i+1] ; j++)
+                result.push_back(result[result.size() - bytes[i]]); // At each iteration result.size() is incremented by 1 so we don't have to add j to the index
+
+        }
+        // Add the next element of the pattern
+        result.push_back(bytes[i+2]);
+    }
+
+    return result;
+}
+
 
 std::vector<uint8_t> LZ77::GetSearchBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
 {
