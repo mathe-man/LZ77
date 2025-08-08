@@ -13,12 +13,8 @@ struct Pattern
 };
 
 
-class CompressionManager {
+class LZ77 {
 public:
-    CompressionManager();
-    ~CompressionManager();
-
-
     [[nodiscard]] std::vector<uint8_t> static Compress(std::vector<uint8_t> bytes, size_t search_buffer_size, size_t look_ahead_buffer_size);
     [[nodiscard]] std::vector<uint8_t> static Decompress(std::vector<uint8_t> bytes);
 
@@ -30,7 +26,7 @@ public:
     }
 
 
-// private: // Remove private to use in debug
+private:
     [[nodiscard]] static std::vector<uint8_t> GetSearchBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index);
     [[nodiscard]] static std::vector<uint8_t> GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index);
     [[nodiscard]] static Pattern SearchPattern(const std::vector<uint8_t>& search_buffer, std::vector<uint8_t> look_ahead_buffer);

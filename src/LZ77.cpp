@@ -1,10 +1,10 @@
-#include "CompressionManager.h"
+#include <LZ77.h>
 
 #include <iostream>
 #include <span>
 
 
-std::vector<uint8_t> CompressionManager::Compress(std::vector<uint8_t> bytes, size_t search_buffer_size, size_t look_ahead_buffer_size)
+std::vector<uint8_t> LZ77::Compress(std::vector<uint8_t> bytes, size_t search_buffer_size, size_t look_ahead_buffer_size)
 {
     auto result = std::vector<Pattern>();
 
@@ -21,7 +21,7 @@ std::vector<uint8_t> CompressionManager::Compress(std::vector<uint8_t> bytes, si
 }
 
 
-std::vector<uint8_t> CompressionManager::GetSearchBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
+std::vector<uint8_t> LZ77::GetSearchBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
 {
     auto result = std::vector<uint8_t>();
 
@@ -35,7 +35,7 @@ std::vector<uint8_t> CompressionManager::GetSearchBuffer(std::vector<uint8_t> by
     return result;
 }
 
-std::vector<uint8_t> CompressionManager::GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
+std::vector<uint8_t> LZ77::GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
 {
     auto result = std::vector<uint8_t>();
 
@@ -48,7 +48,7 @@ std::vector<uint8_t> CompressionManager::GetLookAheadBuffer(std::vector<uint8_t>
     return result;
 }
 
-Pattern CompressionManager::SearchPattern(const std::vector<uint8_t>& search_buffer, std::vector<uint8_t> look_ahead_buffer)
+Pattern LZ77::SearchPattern(const std::vector<uint8_t>& search_buffer, std::vector<uint8_t> look_ahead_buffer)
 {
     auto view = std::span<uint8_t>(look_ahead_buffer);
 
@@ -71,7 +71,7 @@ Pattern CompressionManager::SearchPattern(const std::vector<uint8_t>& search_buf
 }
 
 
-size_t CompressionManager::SearchInBuffer(std::vector<uint8_t> buffer, std::vector<uint8_t> search)
+size_t LZ77::SearchInBuffer(std::vector<uint8_t> buffer, std::vector<uint8_t> search)
 {
     for (size_t i = 0; i < buffer.size(); i++)
     {
