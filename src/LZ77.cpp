@@ -10,8 +10,8 @@ std::vector<uint8_t> LZ77::Compress(std::vector<uint8_t> bytes, size_t search_bu
 
     for (size_t i = 0; i < bytes.size(); i++)
     {
-        auto search_buffer = GetSearchBuffer(bytes, search_buffer_size, i);
-        auto look_ahead_buffer = GetLookAheadBuffer(bytes, look_ahead_buffer_size, i);
+        auto search_buffer = GetSearchBuffer(bytes, i, search_buffer_size);
+        auto look_ahead_buffer = GetLookAheadBuffer(bytes, i, look_ahead_buffer_size);
 
         auto pattern = SearchPattern(search_buffer, look_ahead_buffer);
         result.push_back(pattern);
@@ -51,28 +51,32 @@ std::vector<uint8_t> LZ77::Decompress(std::vector<uint8_t> bytes)
 }
 
 
-std::vector<uint8_t> LZ77::GetSearchBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
+std::vector<uint8_t> LZ77::GetSearchBuffer(std::vector<uint8_t> bytes, size_t index, size_t buffer_size)
 {
     auto result = std::vector<uint8_t>();
 
     if (buffer_size > index)    // Avoids going into negative index later, returning a smaller buffer
         buffer_size = index;
 
+                    // Start the absolute first element of bytes if buffer_size is set to 0
+    size_t start_index = buffer_size == 0 ? 0 : index - buffer_size;
     // Set i to the beginning of the search buffer and iterate
-    for (size_t i = index - buffer_size; i < index; i++)
+    for (size_t i = start_index; i < index; i++)
         result.push_back(bytes[i]);
 
     return result;
 }
 
-std::vector<uint8_t> LZ77::GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index)
+std::vector<uint8_t> LZ77::GetLookAheadBuffer(std::vector<uint8_t> bytes,  size_t index, size_t buffer_size)
 {
     auto result = std::vector<uint8_t>();
 
     if (buffer_size + index - 1 > bytes.size()) // Avoids having an out of range index, returning a smaller buffer
         buffer_size = bytes.size() - index;
 
-    for (auto i = index; i < index + buffer_size; i++)
+                    // If the buffer_size is 0, it will be the rest of the bytes
+    size_t end_index = buffer_size == 0 ? bytes.size() : index + buffer_size;
+    for (auto i = index; i < end_index; i++)
         result.push_back(bytes[i]);
 
     return result;

@@ -26,9 +26,9 @@ public:
     }
 
 
-private:
-    [[nodiscard]] static std::vector<uint8_t> GetSearchBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index);
-    [[nodiscard]] static std::vector<uint8_t> GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t buffer_size, size_t index);
+//private:
+    [[nodiscard]] static std::vector<uint8_t> GetSearchBuffer(std::vector<uint8_t> bytes, size_t index, size_t buffer_size = 0);
+    [[nodiscard]] static std::vector<uint8_t> GetLookAheadBuffer(std::vector<uint8_t> bytes, size_t index, size_t buffer_size = 0);
     [[nodiscard]] static Pattern SearchPattern(const std::vector<uint8_t>& search_buffer, std::vector<uint8_t> look_ahead_buffer);
     [[nodiscard]] static size_t SearchInBuffer(std::vector<uint8_t> buffer, std::vector<uint8_t> search);
 
