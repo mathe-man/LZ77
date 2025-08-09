@@ -11,7 +11,30 @@ auto debug_bytes = std::vector<uint8_t>
 
 void help()
 {
-    // TODO: Add help message
+    std::cout
+    << "LZ77 Compression algorithm \n"
+       "implemented in C++ by mathe-man (https://github.com/mathe-man)\n"
+       "See https://github.com/mathe-man/LZ77 for more infos          \n"
+       "==============================================================\n"
+       "Usage:\n"
+       "| LZ77 input\n"
+       "| LZ77 -args input\n"
+       "-------------------------------\n"
+       "Args*:\n"
+       "| h/H : show this message.\n"
+       "| d/D : decompress the input**.\n"
+       "| i/I : give more information about the result at the end.\n"
+       "| *note: args not be seperated by spaces, see the Examples.\n"
+       "| **note: when the d argument is not gave the input will be compressed.\n"
+       "-------------------------------\n"
+       "Examples:\n"
+       "| LZ77 my_message\n"
+       "| LZ77 -id my_compressed_message  # It will decompress and show infos.\n"
+       "| LZ77 -h my_message              # It will only show this message without making any other operation\n"
+       "-------------------------------\n"
+       "Ask your questions and report issues on the github page"
+       "https://github.com/mathe-man/LZ77\n"
+    << std::endl;
 }
 
 
