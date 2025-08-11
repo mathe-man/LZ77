@@ -38,17 +38,6 @@ void help()
 }
 
 
-
-std::vector<uint8_t> ToBytes(void* source, size_t size)
-{
-    auto input = std::vector<uint8_t>();
-
-    for (int i = 0; i < size; i++)
-        input.push_back(reinterpret_cast<uint8_t*>(source)[i]);
-
-    return input;
-}
-
 std::vector<uint8_t> ReadFromFile(const char* path)
 {
     if (!std::filesystem::exists(path))
@@ -67,82 +56,66 @@ std::vector<uint8_t> ReadFromFile(const char* path)
 
     return result;
 }
-bool WriteToFile(const char* path, const std::vector<uint8_t>& data)
+void WriteToFile(const char* path, const std::vector<uint8_t>& data)
 {
-    std::ofstream file(path, std::ios::binary);
+    std::ofstream file =std::ofstream(path, std::ios::binary);
     if (!file)
         throw std::runtime_error("Failed to open/create file");
 
     file.write(reinterpret_cast<const char*>(data.data()), data.size());
 }
 
-bool contains(std::string* source, std::string key)
+void output_result(std::vector<uint8_t> bytes, const char* out_path, size_t input_size, std::chrono::time_point<std::chrono::system_clock> start_time)
 {
-    if (!source)
-        return false;
 
-    for (auto c : *source)
-        for (auto k : key)
-            if (c == k)
-                return true;
-    return false;
-}
-
-void output_result(std::vector<uint8_t> bytes, size_t input_size, std::chrono::time_point<std::chrono::system_clock> start_time, std::string* args)
-{
-    for (auto byte : bytes)
-        std::cout << byte;
-    std::cout << std::endl;
+    // Write result
+    WriteToFile(out_path, bytes);
 
     // Show more info
-    if (contains(args, "iI")) {
-        std::cout
-        << "Result of " << bytes.size() << " bytes.\n"
-        << "Size ratio of " << LZ77::GetCompressionRatio(input_size, bytes.size())
-        << " ( input/output ).\n"
-        << "Operation ended in " << (std::chrono::high_resolution_clock::now() - start_time).count()
-        << std::endl;
-    }
+    std::cout
+    << "Result of " << bytes.size() << " bytes.\n"
+    << "Size ratio of " << LZ77::GetCompressionRatio(input_size, bytes.size())
+    << " ( input/output ).\n"
+    << "Operation ended in " << (std::chrono::high_resolution_clock::now() - start_time).count()
+    << std::endl;
+
 }
 
+
+bool should_decompress(int argc, char** argv)
+{
+    if (argc > 3)
+        if (argv[3] == "-d" || argv[3] == "--decompress")
+            return true;
+
+    return false;
+}
 
 int main(int argc, char** argv)
 {
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    if (argc < 2)
+    if (argc < 3)
         { help(); return 0; }
 
-    std::string* args = nullptr;
-    if (argv[1][0] == '-')
-        args = new std::string(argv[1]);
-
-    // Help, -h / -H
-    if (contains(args, "hH"))
-        { help(); return 0; }
-
-    // TODO get inputs and give outputs using binary files, console(ASCII) characters don't show correctly the result, end up making error
 
     // Input
     std::vector<uint8_t> inputs;
-    if (!args)  // If there is no arg the input is argv[1]
-        inputs = ToBytes(argv[1], strlen(argv[1]));
-    else if (argc < 3)  // If there is args but no input, throw an error
-        throw std::invalid_argument("Missing required input after arguments");
-    else                // If there is args, the input is argv[2]
-        inputs = ToBytes(argv[2], strlen(argv[2]));
+    const char* out_path;
+
+    inputs = ReadFromFile(argv[1]);
+    out_path = argv[2];
 
 
     // Result
     std::vector<uint8_t> outputs;
-
-    // Decompress
-    if (contains(args, "dD"))
+    // Decompress / Compress
+    if (should_decompress(argc, argv))
         outputs = LZ77::Decompress(inputs);
     else
         outputs = LZ77::Compress(inputs);
 
-    output_result(outputs, inputs.size(), start_time, args);
+    output_result(outputs, out_path, inputs.size(), start_time);
 
-    delete args;
+    delete out_path;
 }
