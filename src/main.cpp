@@ -49,6 +49,33 @@ std::vector<uint8_t> ToBytes(void* source, size_t size)
     return input;
 }
 
+std::vector<uint8_t> ReadFromFile(const char* path)
+{
+    if (!std::filesystem::exists(path))
+        throw std::runtime_error("File not found");
+
+    std::ifstream file(path, std::ios::binary);
+    if (!file)
+        throw std::runtime_error("Failed to open file");
+
+    // Get file size
+    auto size = std::filesystem::file_size(path);
+    std::vector<uint8_t> result(size);
+
+    // Read all bytes
+    file.read(reinterpret_cast<char*>(result.data()), size);
+
+    return result;
+}
+bool WriteToFile(const char* path, const std::vector<uint8_t>& data)
+{
+    std::ofstream file(path, std::ios::binary);
+    if (!file)
+        throw std::runtime_error("Failed to open/create file");
+
+    file.write(reinterpret_cast<const char*>(data.data()), data.size());
+}
+
 bool contains(std::string* source, std::string key)
 {
     if (!source)
